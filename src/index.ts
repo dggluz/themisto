@@ -1,8 +1,6 @@
-import { crawle } from './puppeteer-utils';
+import { getQueryResults } from './providers/easy.provider';
 
-crawle('https://www.google.com', () => {
-		return Promise.resolve(document.title);
-	})
+getQueryResults('silla')
 	.fork(
 		err =>
 			console.log('Hubo un error!', err),

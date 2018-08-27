@@ -64,6 +64,7 @@ const tapChain = <A, B, E> (fn: (x: A) => Task<B, E>) =>
 			.map(_ => x)
 ;
 
+// TODO: refactor to reuse the same browser with several pages.
 export const crawle = <T> (url: string, fn: (...args: any[]) => Promise<T>, ...params: any[]) =>
 	launchPuppeteer()
 		.chain(
