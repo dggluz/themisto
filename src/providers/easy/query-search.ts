@@ -1,9 +1,5 @@
-import { crawle } from '../puppeteer-utils';
+import { crawle } from '../../puppeteer-utils';
 
-// TODO: try to import jquery typings without having jQuery itself as a dependency
-import * as $ from 'jquery';
-
-// TODO: get results from subsequent pages
 export const getQueryResults = (term: string) => {
 	const providerSearchUrl = 'https://www.easy.com.ar/webapp/wcs/stores/servlet/es/SearchDisplay?storeId=10151&catalogId=10051&langId=-5&pageSize=12&beginIndex=0&searchSource=Q&sType=SimpleSearch&resultCatEntryType=2&showResultsPage=true&pageView=image&searchTerm=';
 	const url = providerSearchUrl + encodeURIComponent(term);
@@ -52,46 +48,4 @@ export const getQueryResults = (term: string) => {
 
 			return getAllProducts();
 		});
-};
-
-// TODO: complete
-export interface ProductInformation {
-	sku: string;
-	name: string;
-}
-
-export const getProductInformation = (url: string) => {
-	return crawle(url, () => {
-		console.log(`Getting information for product ${url}`);
-		return new Promise<ProductInformation>((resolve, reject) => {
-			const sku = $('.product-description')
-				.children()
-				.filter((_index, elem) =>
-					$(elem)
-						.text()
-						.trim()
-						.toUpperCase() === 'SKU'
-				)
-				.next()
-				.text()
-				.trim()
-			;
-
-			const productName = $('.product-description')
-				.find('.prod-title')
-				.text()
-				.trim()
-			;
-
-			if (sku && productName) {
-				resolve({
-					sku,
-					name: productName
-				});
-			}
-			else {
-				reject(`Could not get information for product ${url}`);
-			}
-		});
-	});
 };

@@ -1,12 +1,9 @@
-import { getQueryResults, getProductInformation } from './providers/easy.provider';
 import { closeBrowser } from './puppeteer-utils';
-import { tapChain, tap, limitConcurrency } from './utils';
+import { tapChain } from './utils';
+import { queryProductsAndGetInformation } from './providers/easy/easy.provider';
 
 // TODO: try with "silla"
-getQueryResults('heladera')
-	.map(tap(x => console.log('Obtenidos los resultados!', x)))
-	.chain(limitConcurrency(3, getProductInformation))
-	.map(tap(x => console.log('Products information', x)))
+queryProductsAndGetInformation('heladera')
 	.chain(tapChain(closeBrowser))
 	.fork(
 		err =>
