@@ -5,6 +5,8 @@ import {
 	 Response
 } from 'puppeteer';
 import { Task } from '@ts-task/task';
+import { share } from '@ts-task/utils';
+import { tapChain } from './utils';
 
 class PuppeteerError extends Error {
 	PuppeteerError = 'PuppeteerError';
@@ -62,21 +64,20 @@ const closeBrowserPuppeteer = (browser: Browser) =>
 	});
 ;
 
-const tapChain = <A, B, E> (fn: (x: A) => Task<B, E>) =>
-	(x: A) =>
-		fn(x)
-			.map(_ => x)
-;
-
 // TODO: refactor to reuse the same browser with several pages.
 export const crawle = <T> (url: string, fn: (...args: any[]) => Promise<T>, ...params: any[]) =>
-	launchPuppeteer()
-		.chain(
-			browser =>
-				createPagePuppeteer(browser)
-				.chain(tapChain(goToPagePuppeteer(url)))
-				.chain(evaluateOnPagePuppeteer<T>(fn, ...params))
-				.chain(tapChain(_ => closeBrowserPuppeteer(browser)))
-		)
+	browser
+		.chain(createPagePuppeteer)
+		.chain(tapChain(goToPagePuppeteer(url)))
+		.chain(evaluateOnPagePuppeteer<T>(fn, ...params))
+;
+
+const browser = launchPuppeteer()
+	.pipe(share())
+;
+
+export const closeBrowser = () =>
+	browser
+		.chain(closeBrowserPuppeteer)
 ;
 

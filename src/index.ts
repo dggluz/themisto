@@ -1,13 +1,8 @@
 import { getQueryResults, getProductInformation } from './providers/easy.provider';
 import { Task, UncaughtError } from '@ts-task/task';
 import { share } from '@ts-task/utils';
-
-const tap = <A> (fn: (x: A) => any) =>
-	(x: A)	=> {
-		fn(x);
-		return x;
-	}
-;
+import { closeBrowser } from './puppeteer-utils';
+import { tapChain, tap } from './utils';
 
 const limitConcurrency = <A, T, E> (maxConcurrentTasks: number, toTaskFn: (x: A) => Task<T, E>) =>
 	function processTasks (input: A[]) {
@@ -36,6 +31,7 @@ getQueryResults('heladera')
 	.pipe(share())
 	.chain(limitConcurrency(3, getProductInformation))
 	.map(tap(x => console.log('Products information', x)))
+	.chain(tapChain(closeBrowser))
 	.fork(
 		err =>
 			console.log('Hubo un error!', err),
