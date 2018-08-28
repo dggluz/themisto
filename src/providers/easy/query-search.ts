@@ -35,6 +35,7 @@ export const getQueryResults = (term: string) => {
 				new Promise<string[]>((resolve, reject) => {
 					const $seeMoreButton = $('.see-more:visible');
 					if ($seeMoreButton.length) {
+						// TODO: fix this. Sometimes $seeMoreButton.parent().data('src') seems to be null
 						awaitNewProductsChunk($seeMoreButton.parent().data('src'))
 							.then(getAllProducts)
 							.then(resolve, reject);
