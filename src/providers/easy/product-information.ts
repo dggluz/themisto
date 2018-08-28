@@ -6,9 +6,9 @@ export interface ProductInformation {
 	name: string;
 	price: number;
 	originalPrice: number;
-	// category: string;
-	// description: string;
-	// images: string[];
+	category: string;
+	description: string;
+	images: string[];
 }
 
 export const getProductInformation = (url: string) => {
@@ -29,6 +29,26 @@ export const getProductInformation = (url: string) => {
 
 		const getPrice = ($elem: JQuery<HTMLElement>) =>
 			parsePrice(getText($elem));
+		;
+
+		const getCategoryFromBreadCrumbs = ($breadCrumbs: JQuery<HTMLElement>) =>
+			getText($breadCrumbs)
+				.split('|')
+				// Remove first breadcrumb ("Inicio")
+				.slice(1)
+				// Remove last breadcrumb (product's name)
+				.slice(0, -1)
+				.map(anIntermediateCategory =>
+					anIntermediateCategory
+						.trim()
+				)
+				.join(' > ')
+		;
+
+		const getDescription = ($description: JQuery<HTMLElement>) =>
+			getText($description)
+				.replace(/^Código de artículo\: \d+/, '')
+				.trim()
 		;
 
 		const allDefined = ($elems: JQuery<HTMLElement>[]) =>
@@ -57,17 +77,38 @@ export const getProductInformation = (url: string) => {
 
 			const $originalPrice = $('.product-description .price-e');
 
+			const $category = $('#breadcrumb');
+			
+			const $description = $('#Description .tabs-list');
+
+			// TODO: wait for images (sometimes the thumbnails gallery seems to not be loaded)
+			const images = $('#flyout_swatches .s7thumb')
+				.get()
+				.map(elem =>
+					$(elem)
+						.css('background-image')
+						.match(/^url\("(.+)"\)$/)
+				)
+				.map((matches) => matches && matches[1] || '')
+				.filter(anImage => anImage.length)
+			;
+
 			if (allDefined([
 				$sku,
 				$productName,
 				$price,
-				$originalPrice
+				$originalPrice,
+				$category,
+				$description
 			])) {
 				resolve({
 					sku: getText($sku),
 					name: getText($productName),
 					price: getPrice($price),
-					originalPrice: getPrice($originalPrice)
+					originalPrice: getPrice($originalPrice),
+					category: getCategoryFromBreadCrumbs($category),
+					description: getDescription($description),
+					images: images
 				});
 			}
 			else {
