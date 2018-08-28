@@ -29,13 +29,16 @@ const goToPagePuppeteer = (url: string) =>
 	(page: Page) =>
 		new Task<Response, PuppeteerError>((resolve, reject) => {
 			page
-				.goto(url)
+				.goto(url, {
+					timeout: 0,
+					waitUntil: 'domcontentloaded'
+				})
 				.then(
 					response =>
 						response ?
 							resolve(response) :
 							reject(new PuppeteerError(`Could not navigate to ${url}`)),
-					err => reject(new PuppeteerError(err))
+					err => reject(new PuppeteerError(`Could not navigate to ${url}. ${err.toString()}`))
 				)
 		})
 ;
@@ -44,6 +47,7 @@ const goToPagePuppeteer = (url: string) =>
 const evaluateOnPagePuppeteer = <T> (fn: (...args: any[]) => Promise<any>, ...params: any[]) =>
 	(page: Page) =>
 		new Task<T, PuppeteerError>((resolve, reject) => {
+			page.on('console', msg => console.log('PAGE LOG:', msg.text()));
 			page
 				.evaluate(fn, ...params)
 				.then(resolve, err => reject(new PuppeteerError(err)))
