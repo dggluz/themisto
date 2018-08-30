@@ -8,7 +8,7 @@ import { Task } from '@ts-task/task';
 import { share } from '@ts-task/utils';
 import { tapChain } from './utils';
 
-class PuppeteerError extends Error {
+export class PuppeteerError extends Error {
 	PuppeteerError = 'PuppeteerError';
 }
 
