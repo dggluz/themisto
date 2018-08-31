@@ -2,6 +2,7 @@ import { Search, performSearch } from './providers/perform-search';
 import { Task } from '@ts-task/task';
 import { sendSearchResults } from './send-search-results';
 import { ProductInformation } from './providers/product-info';
+import { noop } from './utils';
 
 // TODO: check Search typings
 
@@ -62,6 +63,7 @@ export class SearchQueue {
 				this._performingSearch = false;
 				this._performSearchIfIdle();
 			})
+			.fork(console.error, noop)
 		;
 
 		return this;
