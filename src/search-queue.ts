@@ -30,7 +30,7 @@ export class SearchQueue {
 		return this;
 	}
 
-	_performPendingSearch () {
+	private _performPendingSearch () {
 		const pendingSearch = this._pendingSearches.shift();
 		if (!pendingSearch) {
 			// TODO: reify error
@@ -67,18 +67,18 @@ export class SearchQueue {
 		return this;
 	}
 
-	_performSearchIfIdle () {
+	private _performSearchIfIdle () {
 		if (this._areAvailableSearches() && this._isIdle()) {
 			this._performPendingSearch();
 		}
 		return this;
 	}
 
-	_areAvailableSearches () {
+	private _areAvailableSearches () {
 		return this._pendingSearches.length > 0;
 	}
 
-	_isIdle () {
+	private _isIdle () {
 		return !this._performingSearch;
 	}
 }

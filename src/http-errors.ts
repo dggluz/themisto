@@ -35,6 +35,11 @@ export class BadRequestError extends HttpError {
 	}
 }
 
+/**
+ * UnauthorizedError (status code 401)
+ * @constructor
+ * @extends HttpError
+ */
 export class UnauthorizedError extends HttpError {
 	UnauthorizedError = 'UnauthorizedError';
 
@@ -46,7 +51,11 @@ export class UnauthorizedError extends HttpError {
 	}
 }
 
-
+/**
+ * ForbiddenError (status code 403)
+ * @constructor
+ * @extends HttpError
+ */
 export class ForbiddenError extends HttpError {
 	ForbiddenError = 'ForbiddenError';
 

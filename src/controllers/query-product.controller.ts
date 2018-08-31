@@ -1,13 +1,14 @@
-import { Task, UncaughtError } from '@ts-task/task';
+import { Task } from '@ts-task/task';
 import { createEndpoint } from '../server-utils/create-endpoint';
 import { checkBody } from '../middlewares/check-body.middleware';
 import { objOf, str, oneOf, anything } from 'ts-dynamic-type-checker';
-import { caseError, isInstanceOf } from '@ts-task/utils';
-import { PuppeteerError } from '../puppeteer-utils';
+import { caseError } from '@ts-task/utils';
 import { basicAuthMiddleware } from '../middlewares/basic-auth.middleware';
 import { isJSONFileError } from '../fs-utils';
 import { asUncaughtError } from '@ts-task/task/dist/lib/src/operators';
 import { authorizationMiddleware } from '../middlewares/authorization.middleware';
+import { tap } from '../utils';
+import { searchQueue } from '../search-queue';
 
 export interface SearchData {
 	searchOrderId: string;
@@ -28,9 +29,10 @@ export const queryProductCtrl = createEndpoint(req =>
 			// TODO: improve options typings (relate with the provider)
 			options: anything
 		})))
-		// TODO: decouple search of products and respond to Ganymedes
-		// TODO: manage puppeteer error
-		.catch(caseError(isInstanceOf(PuppeteerError), err => Task.reject(new UncaughtError(err))))
+		.map(tap(req => searchQueue.addSearch(req.body)))
+		.map(_ => ({
+			status: 'ok'
+		}))
 		.catch(caseError(isJSONFileError, err => asUncaughtError(err)))
 	)
 ;
