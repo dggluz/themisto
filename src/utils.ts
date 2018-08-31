@@ -2,17 +2,27 @@ import { Task, UncaughtError } from '@ts-task/task';
 import { isInstanceOf } from '@ts-task/utils';
 import { Overwrite } from 'type-zoo';
 
-export const tapChain = <A, B, E> (fn: (x: A) => Task<B, E>) =>
-	(x: A) =>
-		fn(x)
-			.map(_ => x)
-;
-
-export const tap = <A> (fn: (x: A) => any) =>
-	(x: A)	=> {
+/**
+ * Calls `fn` performing its side effects but discarding its return value and returning the input parameter instead.
+ * @param fn Unary function that performs side effects and whose return value will be discarded
+ * @returns "tapped" `fn`
+ */
+export const tap = <T> (fn: (x: T) => any) =>
+	(x: T) => {
 		fn(x);
 		return x;
 	}
+;
+
+/**
+ * Takes a function that returns a Task and calls it but mapping the resolved value to the input value.
+ * @param fn Unary function that performs side effects and returns a Task.
+ * @returns Task resolved with the input value or rejected with the rejected values from the output Task.
+ */
+export const tapChain = <A, E> (fn: (x: A) => Task<any, E>) =>
+	(x: A) =>
+		fn(x)
+			.map(_ => x)
 ;
 
 export const limitConcurrency = <A, T, E> (maxConcurrentTasks: number, toTaskFn: (x: A) => Task<T, E>) =>

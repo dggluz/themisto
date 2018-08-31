@@ -10,6 +10,11 @@ import { strictObjOf, num, arrOf, str } from 'ts-dynamic-type-checker';
  * @returns validated target
  */
 const configsContract = strictObjOf({
+	ganymede: strictObjOf({
+		searchResults: strictObjOf({
+			url: str
+		})
+	}),
 	permissions: arrOf(strictObjOf({
 		permissionName: str,
 		authorizedUsers: arrOf(str)

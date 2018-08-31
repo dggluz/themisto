@@ -1,15 +1,5 @@
 import { crawle } from '../../puppeteer-utils';
-
-// TODO: complete
-export interface ProductInformation {
-	sku: string;
-	name: string;
-	price: number;
-	originalPrice: number;
-	category: string;
-	description: string;
-	images: string[];
-}
+import { ProductInformation } from '../product-info';
 
 export const getProductInformation = (url: string) => {
 	return crawle(url, () => {

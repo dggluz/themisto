@@ -64,7 +64,6 @@ const closeBrowserPuppeteer = (browser: Browser) =>
 	});
 ;
 
-// TODO: refactor to reuse the same browser with several pages.
 export const crawle = <T> (url: string, fn: (...args: any[]) => Promise<T>, ...params: any[]) =>
 	browser
 		.chain(createPagePuppeteer)

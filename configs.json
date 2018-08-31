@@ -1,4 +1,9 @@
 {
+	"ganymede": {
+		"searchResults": {
+			"url": "http://localhost:3000/api/search-results"
+		}
+	},
 	"permissions": [{
 		"permissionName": "search-product",
 		"authorizedUsers": ["ganymede"]
