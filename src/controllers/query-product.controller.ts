@@ -6,6 +6,10 @@ import { queryProductsAndGetInformation } from '../providers/easy/easy.provider'
 import { assertNever, tap } from '../utils';
 import { caseError, isInstanceOf } from '@ts-task/utils';
 import { PuppeteerError } from '../puppeteer-utils';
+import { basicAuthMiddleware } from '../middlewares/basic-auth.middleware';
+import { isJSONFileError } from '../fs-utils';
+import { asUncaughtError } from '@ts-task/task/dist/lib/src/operators';
+import { authorizationMiddleware } from '../middlewares/authorization.middleware';
 
 export interface SearchData {
 	searchOrderId: string;
@@ -17,7 +21,8 @@ export interface SearchData {
 export const queryProductCtrl = createEndpoint(req =>
 	Task
 		.resolve(req)
-		// TODO: authenticate request
+		.chain(basicAuthMiddleware)
+		.chain(authorizationMiddleware('search-product'))
 		.chain(checkBody(objOf<SearchData>({
 			searchOrderId: str,
 			query: str,
@@ -25,7 +30,6 @@ export const queryProductCtrl = createEndpoint(req =>
 			// TODO: improve options typings (relate with the provider)
 			options: anything
 		})))
-		.map(tap(req => console.log(req.body)))
 		.chain(req => {
 			switch (req.body.provider) {
 				case 'easy':
@@ -36,5 +40,6 @@ export const queryProductCtrl = createEndpoint(req =>
 		// TODO: decouple search of products and respond to Ganymedes
 		// TODO: manage puppeteer error
 		.catch(caseError(isInstanceOf(PuppeteerError), err => Task.reject(new UncaughtError(err))))
+		.catch(caseError(isJSONFileError, err => asUncaughtError(err)))
 	)
 ;

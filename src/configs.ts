@@ -1,6 +1,6 @@
 import { readAndValidateJSONFile } from './fs-utils';
 import { resolve } from 'path';
-import { strictObjOf, num } from 'ts-dynamic-type-checker';
+import { strictObjOf, num, arrOf, str } from 'ts-dynamic-type-checker';
 
 /**
  * Contract (see ts-dynamic-type-checker) to validate against the
@@ -10,6 +10,10 @@ import { strictObjOf, num } from 'ts-dynamic-type-checker';
  * @returns validated target
  */
 const configsContract = strictObjOf({
+	permissions: arrOf(strictObjOf({
+		permissionName: str,
+		authorizedUsers: arrOf(str)
+	})),
 	server: strictObjOf({
 		port: num
 	})

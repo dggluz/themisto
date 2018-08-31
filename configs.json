@@ -1,4 +1,8 @@
 {
+	"permissions": [{
+		"permissionName": "search-product",
+		"authorizedUsers": ["ganymede"]
+	}],
 	"server": {
 		"port": 4000
 	}

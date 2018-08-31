@@ -96,3 +96,28 @@ export const overwrite = <A, B> (target: A, source: B) =>
 export const assertNever = (x: never) => {
 	throw new Error(`This should never be called, but was called with value ${x}`);
 };
+
+/**
+ * Decodes a base64 encoded string
+ * @param base64EncodedString 
+ * @returns decoded string
+ */
+export const base64Decode = (base64EncodedString: string) =>
+	Buffer
+		.from(base64EncodedString, 'base64')
+		.toString()
+;
+
+/**
+ * Takes a predicate and an error. Returns a function to a Task that is resolved with the input value
+ * if the predicate evaluates to `true` or is rejected with the error otherwise. 
+ * @param condition sync predicate
+ * @param error error to throw if the condition returns `false`
+ * @returns Task rejected with the error or resolved with the value.
+ */
+export const rejectIf = <T, E> (condition: (x: T) => boolean, error: E) =>
+	(x: T): Task<T, E> =>
+		condition(x) ?
+			Task.reject(error) :
+			Task.resolve(x)
+;
