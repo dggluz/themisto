@@ -86,7 +86,6 @@ export const getProductInformation = (url: string) => {
 			if (allDefined([
 				$sku,
 				$productName,
-				$price,
 				$originalPrice,
 				$category,
 				$description
@@ -94,7 +93,7 @@ export const getProductInformation = (url: string) => {
 				resolve({
 					sku: getText($sku),
 					name: getText($productName),
-					price: getPrice($price),
+					price: allDefined([$price]) ? getPrice($price) : getPrice($originalPrice),
 					originalPrice: getPrice($originalPrice),
 					category: getCategoryFromBreadCrumbs($category),
 					description: getDescription($description),
