@@ -64,11 +64,27 @@ const closeBrowserPuppeteer = (browser: Browser) =>
 	});
 ;
 
+/**
+ * Returns a function that closes the page and resolves to the received parameter.
+ */
+const closePuppeteerPage = (page: Page) =>
+	<T> (x: T) =>
+		new Task<void, PuppeteerError>((resolve, reject) => {
+			page
+				.close()
+				.then(resolve, err => reject(new PuppeteerError(err)));
+		})
+		.map(_ => x)
+;
+
 export const crawle = <T> (url: string, fn: (...args: any[]) => Promise<T>, ...params: any[]) =>
 	browser
 		.chain(createPagePuppeteer)
 		.chain(tapChain(goToPagePuppeteer(url)))
-		.chain(evaluateOnPagePuppeteer<T>(fn, ...params))
+		.chain(page =>
+			evaluateOnPagePuppeteer<T>(fn, ...params)(page)
+				.chain(closePuppeteerPage(page))
+		)
 ;
 
 const browser = launchPuppeteer()
