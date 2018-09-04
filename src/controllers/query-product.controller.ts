@@ -9,11 +9,12 @@ import { asUncaughtError } from '@ts-task/task/dist/lib/src/operators';
 import { authorizationMiddleware } from '../middlewares/authorization.middleware';
 import { tap } from '../utils';
 import { searchQueue } from '../search-queue';
+import { Provider } from '../providers/provider';
 
 export interface SearchData {
 	searchOrderId: string;
 	query: string;
-	provider: 'easy';
+	provider: Provider;
 	options: any;
 }
 

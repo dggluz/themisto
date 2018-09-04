@@ -3,6 +3,7 @@ import { Task } from '@ts-task/task';
 import { sendSearchResults } from './send-search-results';
 import { ProductInformation } from './providers/product-info';
 import { noop } from './utils';
+import { Provider } from './providers/provider';
 
 // TODO: check Search typings
 
@@ -11,12 +12,14 @@ export interface SearchSuccessfulResult {
 	query: string;
 	status: 'fulfilled';
 	products: ProductInformation[];
+	provider: Provider;
 }
 
 export interface SearchFailedResult {
 	searchOrderId: string;
 	query: string;
 	status: 'failed';
+	provider: Provider;
 }
 
 export type SearchResults = SearchSuccessfulResult | SearchFailedResult;
@@ -44,14 +47,16 @@ export class SearchQueue {
 				searchOrderId: pendingSearch.searchOrderId,
 				query: pendingSearch.query,
 				status: 'fulfilled',
-				products: productsInfo
+				products: productsInfo,
+				provider: pendingSearch.provider
 			} as SearchSuccessfulResult))
 			.catch(err => {
 				console.error(err);
 				return Task.resolve({
 					searchOrderId: pendingSearch.searchOrderId,
 					query: pendingSearch.query,
-					status: 'failed'
+					status: 'failed',
+					provider: pendingSearch.provider
 				} as SearchFailedResult);
 			})
 			.chain(sendSearchResults)

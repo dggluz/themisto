@@ -1,10 +1,11 @@
 import { assertNever } from '../utils';
 import { queryProductsAndGetInformation } from './easy/easy.provider';
+import { Provider } from './provider';
 
 export interface Search {
 	searchOrderId: string;
 	query: string;
-	provider: 'easy';
+	provider: Provider;
 	options: any;
 }
 
